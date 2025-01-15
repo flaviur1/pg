@@ -1,4 +1,4 @@
-﻿#if defined (__APPLE__)
+#if defined (__APPLE__)
     #define GLFW_INCLUDE_GLCOREARB
     #define GL_SILENCE_DEPRECATION
 #else
@@ -19,11 +19,6 @@
 #include "Model3D.hpp"
 
 #include <iostream>
-
-//variables
-float lastX = 1024 / 2.0f;  // Centru inițial pe axa X
-float lastY = 768 / 2.0f;   // Centru inițial pe axa Y
-bool firstMouse = true;
 
 // window
 gps::Window myWindow;
@@ -96,17 +91,6 @@ void windowResizeCallback(GLFWwindow* window, int width, int height) {
 	//TODO
 }
 
-float fov = 45.0f; // FOV-ul inițial
-
-void updateProjectionMatrix(float fov) {
-    fov = glm::clamp(fov, 30.0f, 90.0f); // Limite pentru zoom
-    projection = glm::perspective(glm::radians(fov),
-        (float)myWindow.getWindowDimensions().width /
-        (float)myWindow.getWindowDimensions().height, 0.1f, 100.0f);
-    glUniformMatrix4fv(projectionLoc, 1, GL_FALSE, glm::value_ptr(projection));
-}
-
-
 void keyboardCallback(GLFWwindow* window, int key, int scancode, int action, int mode) {
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
         glfwSetWindowShouldClose(window, GL_TRUE);
@@ -119,23 +103,10 @@ void keyboardCallback(GLFWwindow* window, int key, int scancode, int action, int
             pressedKeys[key] = false;
         }
     }
-    if (key == GLFW_KEY_O && action == GLFW_PRESS)
-        fov -= 5.0f; // Zoom in
-    if (key == GLFW_KEY_P && action == GLFW_PRESS)
-        fov += 5.0f; // Zoom out
-
-    updateProjectionMatrix(fov);
-
 }
 
-double initX = 400, initY = 300;
-double newX = 0, newY = 0;
 void mouseCallback(GLFWwindow* window, double xpos, double ypos) {
-
-    xpos = (initX - xpos) / 10;
-    ypos = -(initY - ypos) / 10;
-    myCamera.rotate(ypos, xpos);
-    glfwSetCursorPos(window, initX, initY);
+    //TODO
 }
 
 void processMovement() {
@@ -198,7 +169,6 @@ void processMovement() {
 
 void initOpenGLWindow() {
     myWindow.Create(1024, 768, "OpenGL Project Core");
-    glfwSetInputMode(myWindow.getWindow(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 }
 
 void setWindowCallbacks() {
@@ -219,7 +189,7 @@ void initOpenGLState() {
 }
 
 void initModels() {
-    scena.LoadModel("scena/scena.obj");
+    scena.LoadModel("models/teapot/teapot20segUT.obj");
 }
 
 void initShaders() {
@@ -280,14 +250,13 @@ void drawObjects(gps::Shader shader) {
     scena.Draw(shader);
 }
 
-float scaleFactor = 1.0f; // Factorul inițial de scalare
 void renderScene() {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    model = glm::scale(glm::mat4(1.0f), glm::vec3(scaleFactor));
-    glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+	//render the scene
 
-    drawObjects(myBasicShader);
+	// render the teapot
+	drawObjects(myBasicShader);
 
 }
 
